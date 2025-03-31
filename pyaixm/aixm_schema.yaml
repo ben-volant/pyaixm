@@ -521,6 +521,9 @@ GuidanceLineMarking:
   markingICAOStandard: CodeYesNoType
   condition: CodeMarkingConditionType
 
+LandingTakeoffAreaCollection:
+  runway: Runway
+
 LightActivation:
   clicks: NoNumberType
   intensityLevel: CodeLightIntensityType
@@ -821,13 +824,17 @@ ContactInformation:
   address: PostalAddress
   phoneFax: TelephoneContact
 
-ElevatedPoint:
+Point: &Point
   pos: str
+  horizontalAccuracy: str
+  annotation: str
+
+ElevatedPoint:
+  <<: *Point
   elevation: str
   geoidUndulation: str
   verticalDatum: str
   verticalAccuracy: str
-  horizontalAccuracy: str
 
 ElevatedSurface:
   elevation: ValDistanceVerticalType
@@ -1021,6 +1028,8 @@ DesignatedPoint:
   designator: CodeDesignatedPointDesignatorType
   type: CodeDesignatedPointType
   name: TextNameType
+  location: Point
+  airportHeliport: AirportHeliport
 
 DME:
   <<: *NavaidEquipment
@@ -1321,10 +1330,6 @@ Service: &Service
   availability: ServiceOperationalStatus
   groundCommunication: ContactInformation
 
-CallsignDetail:
-  callSign: TextNameType
-  language: CodeLanguageType
-
 TrafficSeparationService: &TrafficSeparationService
   <<: *Service
   radarAssisted: CodeYesNoType
@@ -1357,7 +1362,7 @@ AirportClearanceService:
   <<: *AirportGroundService
   snowPlan: TextInstructionType
 
-AirportGroundService:
+AirportHeliportGroundService:
   <<: *Service
   airportHeliport: AirportHeliport
 
@@ -1521,3 +1526,56 @@ SecondarySurveillanceRadar:
 
 SurveillanceGroundStation:
   videoMap: CodeYesNoType
+
+##################
+##  Approaches  ##
+##################
+
+InstrumentApproachProcedure:
+  approachPrefix: CodeApproachPrefixType 
+  approachType: CodeApproachType 
+  multipleIdentification: CodeUpperAlphaType 
+  copterTrack: ValBearingType 
+  circlingIdentification: CodeUpperAlphaType 
+  courseReversalInstruction: TextInstructionType 
+  additionalEquipment: CodeApproachEquipmentAdditionalType 
+  channelGNSS: ValChannelNumberType 
+  WAASReliable: CodeYesNoType 
+  communicationFailureInstruction: TextInstructionType 
+  instruction: TextInstructionType 
+  designCriteria: CodeDesignStandardType 
+  codingStandard: CodeProcedureCodingStandardType 
+  flightChecked: CodeYesNoType 
+  name: TextNameType 
+  RNAV: CodeYesNoType 
+  airportHeliport: AirportHeliport
+  AircraftCharacteristic: AircraftCharacteristic
+  landing: LandingTakeoffAreaCollection
+  missedInstruction: MissedApproachGroup
+  flightTransition: ProcedureTransition
+
+MissedApproachGroup:
+  instruction: TextInstructionType
+
+
+SegmentLeg: &SegmentLeg
+  upperLimitAltitude: ValDistanceVerticalType
+  upperLimitReference: CodeVerticalReferenceType
+  lowerLimitAltitude: ValDistanceVerticalType
+  lowerLimitReference: CodeVerticalReferenceType
+
+InitialLeg:
+  <<: *SegmentLeg
+
+TransitionLeg:
+  <<: *SegmentLeg
+
+ProcedureTransition:
+  annotation: Note
+  theSegmentLeg: SegmentLeg
+  transitionId: CodeDesignatedPointDesignatorType
+  type: CodeProcedurePhaseType
+  instruction: TextInstructionType
+  vectorHeading: ValBearingType
+
+
