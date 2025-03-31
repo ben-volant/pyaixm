@@ -522,7 +522,7 @@ GuidanceLineMarking:
   condition: CodeMarkingConditionType
 
 LandingTakeoffAreaCollection:
-  runway: Runway
+  runway: RunwayDirection
 
 LightActivation:
   clicks: NoNumberType
@@ -1567,7 +1567,16 @@ SegmentLeg: &SegmentLeg
 InitialLeg:
   <<: *SegmentLeg
 
+IntermediateLeg:
+  <<: *SegmentLeg
+
 TransitionLeg:
+  <<: *SegmentLeg
+
+MissedApproachLeg:
+  <<: *SegmentLeg
+
+FinalLeg:
   <<: *SegmentLeg
 
 ProcedureTransition:
@@ -1577,5 +1586,3 @@ ProcedureTransition:
   type: CodeProcedurePhaseType
   instruction: TextInstructionType
   vectorHeading: ValBearingType
-
-
