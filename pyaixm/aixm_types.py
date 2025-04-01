@@ -138,7 +138,7 @@ class Nil():
 
 def construct_dataclass(schema: dict, classname: str):
 
-    # this method defined here is placed in the to be contructed class
+    # Modified parse method to handle choice fields
     @classmethod
     def _parse(cls, featureElm, parent = None):
         c = cls(parent=parent)
@@ -149,27 +149,69 @@ def construct_dataclass(schema: dict, classname: str):
             if not field.metadata.get('extract'):
                 continue              # field not marked as extract => skip
 
-            attribute = []
-            for elm in featureElm.iter('{*}' + field.metadata['tag']):
-                feature_type = feature_types.get(field.type, str)
+            # Check if this is a choice field
+            if field.metadata.get('is_choice'):
+                choice_options = field.metadata.get('choice_options', [])
+                attribute = []
+                
+                # Try each choice option
+                for choice_option in choice_options:
+                    choice_tag = choice_option['tag']
+                    choice_type_name = choice_option['type']
+                    choice_type = feature_types.get(choice_type_name, str)
+                    
+                    # Look for elements with this tag
+                    for elm in featureElm.iter('{*}' + choice_tag):
+                        xlink = XLink.parse(elm)
+                        nil = Nil.parse(elm)
 
-                xlink = XLink.parse(elm)
-                nil = Nil.parse(elm)
-
-                if xlink is not None:
-                    attribute.append(xlink)
-                elif nil is not None:
-                    attribute.append(nil)
-                elif feature_type == str:
-                    if elm.text is not None and len(elm.text.strip()) > 0:
-                        attribute.append(elm.text.strip())
-                elif field.type == 'GMLPatches':
-                    """ todo: generic solution"""
-                    attribute += [feature_type.parse(elm2, parent=c) for elm2 in elm.iter('{*}PolygonPatch')]
+                        if xlink is not None:
+                            attribute.append(xlink)
+                        elif nil is not None:
+                            attribute.append(nil)
+                        elif choice_type == str:
+                            if elm.text is not None and len(elm.text.strip()) > 0:
+                                attribute.append(elm.text.strip())
+                        else:
+                            # Handle complex types
+                            sub_type_name = choice_type_name if '{*}' + choice_type_name in [e.tag for e in elm] else None
+                            if sub_type_name:
+                                attribute += [choice_type.parse(elm2, parent=c) for elm2 in elm.iter('{*}' + sub_type_name)]
+                            else:
+                                # The element itself might be the content
+                                attribute.append(choice_type.parse(elm, parent=c))
+                
+                # Set the attribute
+                if len(attribute) == 0:
+                    c.__setattr__(field.name, None)
+                elif len(attribute) == 1:
+                    c.__setattr__(field.name, attribute[0])
                 else:
-                    # field type is complex (not str)
-                    # recurse
-                    attribute += [feature_type.parse(elm2, parent=c) for elm2 in elm.iter('{*}' + field.type)]
+                    c.__setattr__(field.name, attribute)
+                
+            else:
+                # Original parsing for non-choice fields
+                attribute = []
+                for elm in featureElm.iter('{*}' + field.metadata['tag']):
+                    feature_type = feature_types.get(field.type, str)
+                    
+                    xlink = XLink.parse(elm)
+                    nil = Nil.parse(elm)
+
+                    if xlink is not None:
+                        attribute.append(xlink)
+                    elif nil is not None:
+                        attribute.append(nil)
+                    elif feature_type == str:
+                        if elm.text is not None and len(elm.text.strip()) > 0:
+                            attribute.append(elm.text.strip())
+                    elif field.type == 'GMLPatches':
+                        """ todo: generic solution"""
+                        attribute += [feature_type.parse(elm2, parent=c) for elm2 in elm.iter('{*}PolygonPatch')]
+                    else:
+                        # field type is complex (not str)
+                        # recurse
+                        attribute += [feature_type.parse(elm2, parent=c) for elm2 in elm.iter('{*}' + field.type)]
 
                 if len(attribute) == 0:
                     c.__setattr__(field.name, None)
@@ -179,19 +221,46 @@ def construct_dataclass(schema: dict, classname: str):
                     c.__setattr__(field.name, attribute)
         return c
 
-
+    # Parse the schema and create fields
     class_fields = list()
     class_fields.append(('feature_name', str, field(default=classname)))
-    for tag, typename in schema[classname].items():
-        metadata = {'extract': True, 'tag': tag}
+    
+    for tag, value in schema[classname].items():
         fieldname = tag.replace('-', '')  # remove invalid chars from field name
-
-        class_fields.append(
-            (fieldname, typename, field(default=None, metadata=metadata))
-        )
+        
+        # Check if this is a choice field
+        if isinstance(value, dict) and 'choice' in value:
+            # This is a choice field
+            base_type = value.get('type')
+            choice_options = []
+            
+            for choice_item in value['choice']:
+                if isinstance(choice_item, dict):
+                    for choice_tag, choice_type in choice_item.items():
+                        choice_options.append({
+                            'tag': choice_tag,
+                            'type': choice_type
+                        })
+            
+            metadata = {
+                'extract': True, 
+                'tag': tag,
+                'is_choice': True,
+                'base_type': base_type,
+                'choice_options': choice_options
+            }
+            
+            class_fields.append(
+                (fieldname, base_type, field(default=None, metadata=metadata))
+            )
+        else:
+            # Regular field
+            metadata = {'extract': True, 'tag': tag}
+            class_fields.append(
+                (fieldname, value, field(default=None, metadata=metadata))
+            )
 
     new_class = make_dataclass(classname, class_fields, bases=(Feature,), namespace={'parse': _parse})
-
     return new_class
 
 

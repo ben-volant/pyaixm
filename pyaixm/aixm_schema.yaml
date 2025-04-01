@@ -223,7 +223,11 @@ SegmentPoint: &SegmentPoint
   radarGuidance: CodeYesNoType
   facilityMakeup: PointReference
   extendedServiceVolume: RadioFrequencyArea
-  pointChoice: SignificantPoint
+  pointChoice:
+    type: SignificantPoint
+    choice:
+      - pointChoice_fixDesignatedPoint: DesignatedPoint
+      - pointChoice_navaidSystem: Navaid
 
 #########################
 ##  Aerial Refuelling  ##
@@ -886,7 +890,11 @@ TerminalSegmentPoint: #*SegmentPoint
   facilityMakeup: PointReference
   extendedServiceVolume: RadioFrequencyArea
   annotation: Note
-  pointChoice: SignificantPoint
+  pointChoice:
+    type: SignificantPoint
+    choice:
+      - pointChoice_fixDesignatedPoint: DesignatedPoint
+      - pointChoice_navaidSystem: Navaid
 
 VerticalStructure:
   name: TextNameType
