@@ -883,6 +883,12 @@ TerminalSegmentPoint: #*SegmentPoint
   flyOver: CodeYesNoType
   waypoint: CodeYesNoType
   radarGuidance: CodeYesNoType
+  facilityMakeup: PointReference
+  extendedServiceVolume: RadioFrequencyArea
+  annotation: Note
+  pointChoice: SignificantPoint
+  pointChoice_navaidSystem: SignificantPoint
+  pointChoice_fixDesignatedPoint: SignificantPoint
 
 VerticalStructure:
   name: TextNameType
@@ -1557,12 +1563,39 @@ InstrumentApproachProcedure:
 MissedApproachGroup:
   instruction: TextInstructionType
 
-
 SegmentLeg: &SegmentLeg
+  endConditionDesignator: CodeSegmentTerminationType
+  legPath: CodeTrajectoryType
+  legTypeARINC: CodeSegmentPathType
+  course: ValBearingType
+  courseType: CodeCourseType
+  courseDirection: CodeDirectionReferenceType
+  turnDirection: CodeDirectionTurnType
+  speedLimit: ValSpeedType
+  speedReference: CodeSpeedReferenceType
+  speedInterpretation: CodeAltitudeUseType
+  bankAngle: ValAngleType
+  length: ValDistanceType
+  duration: ValDurationType
+  procedureTurnRequired: CodeYesNoType
   upperLimitAltitude: ValDistanceVerticalType
   upperLimitReference: CodeVerticalReferenceType
   lowerLimitAltitude: ValDistanceVerticalType
   lowerLimitReference: CodeVerticalReferenceType
+  altitudeInterpretation: CodeAltitudeUseType
+  altitudeOverrideATC: ValDistanceVerticalType
+  altitudeOverrideReference: CodeVerticalReferenceType
+  verticalAngle: ValAngleType
+  trajectory: Curve
+  holding: HoldingPattern
+  angle: AngleIndication
+  distance: DistanceIndication
+  startPoint: TerminalSegmentPoint
+  arcCentre: TerminalSegmentPoint
+  endPoint: TerminalSegmentPoint
+  annotation: Note
+  aircraftCategory: AircraftCharacteristic
+  designSurface: ObstacleAssessmentArea
 
 InitialLeg:
   <<: *SegmentLeg
@@ -1586,3 +1619,4 @@ ProcedureTransition:
   type: CodeProcedurePhaseType
   instruction: TextInstructionType
   vectorHeading: ValBearingType
+  seqNumberARINC: NoSequenceType
