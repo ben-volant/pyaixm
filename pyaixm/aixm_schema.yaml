@@ -1597,20 +1597,23 @@ SegmentLeg: &SegmentLeg
   aircraftCategory: AircraftCharacteristic
   designSurface: ObstacleAssessmentArea
 
-InitialLeg:
+ApproachLeg: &ApproachLeg
   <<: *SegmentLeg
 
-IntermediateLeg:
-  <<: *SegmentLeg
-
-TransitionLeg:
-  <<: *SegmentLeg
-
-MissedApproachLeg:
-  <<: *SegmentLeg
+ArrivalFeederLeg: 
+  <<: *ApproachLeg
 
 FinalLeg:
-  <<: *SegmentLeg
+  <<: *ApproachLeg
+
+InitialLeg:
+  <<: *ApproachLeg
+
+IntermediateLeg:
+  <<: *ApproachLeg
+
+MissedApproachLeg:
+  <<: *ApproachLeg
 
 ProcedureTransition:
   annotation: Note
