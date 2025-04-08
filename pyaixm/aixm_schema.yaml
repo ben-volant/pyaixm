@@ -1543,7 +1543,36 @@ SurveillanceGroundStation:
 ##  Approaches  ##
 ##################
 
+ProcedureAvailability:
+  status: CodeProcedureAvailabilityType
+  timeInterval: Timesheet
+  annotation: Note
+  specialDateAuthority: OrganisationAuthority
+
+Procedure: &Procedure
+  communicationFailureInstruction: TextInstructionType
+  instruction: TextInstructionType
+  designCriteria: CodeDesignStandardType
+  codingStandard: CodeProcedureCodingStandardType
+  flightChecked: CodeYesNoType
+  name: TextNameType
+  RNAV: CodeYesNoType
+  availability: ProcedureAvailability
+  airportHeliport: AirportHeliport
+  aircraftCharactertic: AircraftCharacteristic
+  flightTransition: ProcedureTransition
+  guidanceFacility: GuidanceService
+  annotation: Note
+  safeAltitude: SafeAltitudeArea
+
+FinalProfile:
+  altitude: ApproachAltitudeTable
+  distance: ApproachDistanceTable
+  timing: ApproachTimingTable
+  annotation: note
+
 InstrumentApproachProcedure:
+  <<: *Procedure
   approachPrefix: CodeApproachPrefixType 
   approachType: CodeApproachType 
   multipleIdentification: CodeUpperAlphaType 
@@ -1553,18 +1582,9 @@ InstrumentApproachProcedure:
   additionalEquipment: CodeApproachEquipmentAdditionalType 
   channelGNSS: ValChannelNumberType 
   WAASReliable: CodeYesNoType 
-  communicationFailureInstruction: TextInstructionType 
-  instruction: TextInstructionType 
-  designCriteria: CodeDesignStandardType 
-  codingStandard: CodeProcedureCodingStandardType 
-  flightChecked: CodeYesNoType 
-  name: TextNameType 
-  RNAV: CodeYesNoType 
-  airportHeliport: AirportHeliport
-  AircraftCharacteristic: AircraftCharacteristic
   landing: LandingTakeoffAreaCollection
   missedInstruction: MissedApproachGroup
-  flightTransition: ProcedureTransition
+  finalProfile: FinalProfile
 
 MissedApproachGroup:
   instruction: TextInstructionType
@@ -1629,3 +1649,56 @@ ProcedureTransition:
   instruction: TextInstructionType
   vectorHeading: ValBearingType
   seqNumberARINC: NoSequenceType
+
+SafeAltitudeArea:
+  location: AirportHeliport
+  safeAreaType: CodeSafeAltitudeType
+  centrePoint: 
+    type: SignificantPoint
+    choice:
+      - airportReferencePoint: AirportHeliport
+      - aimingPoint: TouchDownLiftOff
+      - runwayPoint: RunwayCentrelinePoint
+      - position: Point
+      - centrePoint_navaidSystem: Navaid
+      - centrePoint_fixDesignatedPoint: DesignatedPoint
+      - annotation: Note
+      - sector: SafeAltitudeSector
+
+SafeAltitudeSector:
+  bufferWidth: ValDistanceType
+  extent: Surface
+  annotation: Note
+  sectorDefinition: CircleSector
+  significantObstacle: Obstruction
+
+StandardInstrumentDeparture:
+  <<: *Procedure
+  designator: TextSIDSTARDesignatorType
+  contingencyRoute:  CodeYesNoType
+  takeoff: LandingTakeoffAreaCollection
+
+StandardInstrumentArrival:
+  <<: *Procedure
+  designator: TextSIDSTARDesignatorType
+  arrival: LandingTakeoffAreaCollection
+
+TerminalArrivalAreaSector:
+  flyByCode: CodeYesNoType
+  procedureTurnRequired: CodeYesNoType
+  altitudeDescription: CodeAltitudeUseType
+  extent: Surface
+  annotation: Note
+  sectorDefinition: CircleSector
+  significantObstacle: Obstruction
+
+TerminalArrivalArea:
+  arrivalAreaType: CodeTAAType
+  outerBufferWidth: ValDistanceType
+  lateralBufferWidth: ValDistanceType
+  buffer: Surface
+  IAF: SignificantPoint
+  IF: SignificantPoint
+  annotation: Note
+  approachRNAV: InstrumentApproachProcedure
+  sector: TerminalArrivalAreaSector
