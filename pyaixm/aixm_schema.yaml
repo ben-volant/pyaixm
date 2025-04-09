@@ -723,6 +723,14 @@ TouchDownLiftOff:
   slope: ValSlopeType
   helicopterClass: CodeHelicopterPerformanceType
   abandoned: CodeYesNoType
+  associatedAirportHeliport: AirportHeliport
+  surfaceProperties: SurfaceCharacteristics
+  aimingPoint: ElevatedPoint
+  contaminant: TouchDownLiftOffContamination
+  annotation: Note
+  extent: ElevatedSurface
+  approachTakeOffArea: Runway
+  availability: ManoeuvringAreaAvailability 
 
 TouchDownLiftOffLightSystem:
   <<: *GroundLightSystem
@@ -846,7 +854,7 @@ ElevatedSurface:
   verticalDatum: CodeVerticalDatumType
   verticalAccuracy: ValDistanceType
   horizontalAccuracy: ValDistanceType
-  patches: GMLPatches
+  patches: GMLPatch
 
 EnRouteSegmentPoint: #*SegmentPoint
   roleFreeFlight: CodeFreeFlightType
@@ -871,7 +879,7 @@ RunwayVisualRange:
 
 Surface:
   horizontalAccuracy: ValDistanceType
-  patches: GMLPatches
+  patches: GMLPatch
 
 TaxiwayMarking:
   markingLocation: CodeApronSectionType
@@ -1189,6 +1197,66 @@ VOR:
   zeroBearingDirection: CodeNorthReferenceType
   declination: ValMagneticVariationType
 
+##################
+##  Obstacle    ##
+##################
+
+ObstacleArea:
+  type: CodeObstacleAreaType
+  obstructionIdSurfaceCondition: CodeObstacleAssessmentSurfaceType
+  surfaceExtent: Surface
+  annotation: Note
+  obstacle: VerticalStructure
+  reference: ObstacleAreaOrigin 
+
+VerticalStructure:
+  name: TextNameType
+  type: CodeVerticalStructureType
+  lighted: CodeYesNoType
+  markingICAOStandard: CodeYesNoType
+  group: CodeYesNoType
+  length: ValDistanceType
+  width: ValDistanceType
+  radius: ValDistanceType
+  lightingICAOStandard: CodeYesNoType
+  synchronisedLighting: CodeYesNoType
+  supportedGroundLight: GroundLightSystem
+  marker: MarkerBeacon
+  hostedNavaidEquipment: NavaidEquipment
+  hostedSpecialNavStation: SpecialNavigationStation
+  annotation: Note
+  hostedPassengerService: PassengerService
+  supportedService: Service
+  hostedOrganisation: OrganisationAuthority
+  lightingAvailability: VerticalStructureLightingStatus
+  hostedUnit: Unit
+  part: VerticalStructurePart
+
+VerticalStructureLightingStatus:
+  <<: *PropertiesWithSchedule
+  status: CodeStatusOperationsType 
+
+VerticalStructurePart:
+  <<: *PropertiesWithSchedule
+  verticalExtent: ValDistanceType
+  verticalExtentAccuracy: ValDistanceType
+  type: CodeVerticalStructureType
+  constructionStatus: CodeStatusConstructionType
+  markingPattern: CodeVerticalStructureMarkingType
+  markingFirstColour: CodeColourType
+  markingSecondColour: CodeColourType
+  mobile: CodeYesNoType
+  frangible: CodeYesNoType
+  visibleMaterial: CodeVerticalStructureMaterialType
+  designator: TextDesignatorType 
+  horizontalProjection: VerticalStructurePartGeometry
+  lighting: LightElement
+
+VerticalStructurePartGeometry:
+  linearExtent: ElevatedCurve
+  location: ElevatedPoint
+  surfaceExtent: ElevatedSurface 
+
 ####################
 ##  Organization  ##
 ####################
@@ -1365,6 +1433,7 @@ AirTrafficManagementService:
 
 AirportGroundService: &AirportGroundService
   <<: *Service
+  airportHeliport: AirportHeliport
 
 AircraftGroundService:
   <<: *AirportGroundService
