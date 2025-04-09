@@ -1209,29 +1209,6 @@ ObstacleArea:
   obstacle: VerticalStructure
   reference: ObstacleAreaOrigin 
 
-VerticalStructure:
-  name: TextNameType
-  type: CodeVerticalStructureType
-  lighted: CodeYesNoType
-  markingICAOStandard: CodeYesNoType
-  group: CodeYesNoType
-  length: ValDistanceType
-  width: ValDistanceType
-  radius: ValDistanceType
-  lightingICAOStandard: CodeYesNoType
-  synchronisedLighting: CodeYesNoType
-  supportedGroundLight: GroundLightSystem
-  marker: MarkerBeacon
-  hostedNavaidEquipment: NavaidEquipment
-  hostedSpecialNavStation: SpecialNavigationStation
-  annotation: Note
-  hostedPassengerService: PassengerService
-  supportedService: Service
-  hostedOrganisation: OrganisationAuthority
-  lightingAvailability: VerticalStructureLightingStatus
-  hostedUnit: Unit
-  part: VerticalStructurePart
-
 VerticalStructureLightingStatus:
   <<: *PropertiesWithSchedule
   status: CodeStatusOperationsType 
