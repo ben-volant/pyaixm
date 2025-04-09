@@ -7,34 +7,36 @@ import typing
 from . import aixm_types
 
 
-def replace_xlinks(features: list):
+def replace_xlinks(features: list) -> None:
     "Replaces XLink references on all features with the referenced object"
     for feature in features:
         if isinstance(feature, aixm_types.Feature):
-            replace_xlinks_r(feature, path=[feature.identifier])
+            replace_xlinks_r(feature, {id(feature)})
 
 
-def replace_xlinks_r(feature: aixm_types.Feature, path: list = []):
-    new_path = path
-    for field in fields(feature):
-        if field.name == "parent":
-            continue
-        attr = getattr(feature, field.name)
-        if isinstance(attr, list):
+def replace_xlinks_r(entity: aixm_types.Feature | list, visited: set = set()) -> None:
+
+    entity_id = id(entity)
+    if entity_id in visited:
+        return
+
+    visited.add(entity_id)
+
+    if isinstance(entity, list):
+        for element in entity:
+            replace_xlinks_r(element, visited)
+    elif isinstance(entity, aixm_types.Feature):
+        for field in fields(entity):
+            if field.name == "parent":
+                continue
+            attr = getattr(entity, field.name)
             for i, a in enumerate(attr):
-                if isinstance(a, aixm_types.Feature):
-                   replace_xlinks_r(a, path=new_path + [a.identifier])
                 if isinstance(a, aixm_types.XLink):
                     if a.target is not None:
                         attr[i] = a.target
-        if isinstance(attr, aixm_types.Feature):
-            if attr.identifier in path:
-                continue
-            new_path.append(attr.identifier)
-            replace_xlinks_r(attr, path=new_path)
-        if isinstance(attr, aixm_types.XLink):
-            if attr.target is not None:
-                setattr(feature, field.name, attr.target)
+                else:
+                    replace_xlinks_r(a, visited)
+    
 
 def parse(files: list[str], resolve_xlinks = False) -> list:
     l = []
