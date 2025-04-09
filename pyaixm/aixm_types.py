@@ -76,7 +76,7 @@ class GMLArcByCenterPoint:
     @classmethod
     def parse(cls, elm):
         o = cls()
-        o.pos = cls._parse_poslist(elm.find(GML + 'pos').text)
+        o.pos = cls._parse_poslist(elm.find(".//" + GML + 'pos').text)
         o.radius = float(elm.find(GML + 'radius').text)
         o.radius_uom = elm.find(GML + 'radius').get('uom')
         if elm.find(GML + 'startAngle') is not None:
