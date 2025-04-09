@@ -1759,14 +1759,20 @@ ArrivalLeg:
   <<: *SegmentLeg
   requiredNavigationPerformance: CodeRNPType
 
-ProcedureTransition:
+ProcedureTransitionLeg:
+  seqNumberArinc: NoSequenceType
   annotation: Note
   theSegmentLeg: SegmentLeg
+
+ProcedureTransition:
   transitionId: CodeDesignatedPointDesignatorType
   type: CodeProcedurePhaseType
   instruction: TextInstructionType
   vectorHeading: ValBearingType
-  seqNumberARINC: NoSequenceType
+  trajectory: Curve
+  annotation: Note
+  departureRunwayTransition: LandingTakeoffAreaCollection
+  transitionLeg: ProcedureTransitionLeg
 
 SafeAltitudeArea:
   location: AirportHeliport
