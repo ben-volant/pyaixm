@@ -11,10 +11,10 @@ def replace_xlinks(features: list) -> None:
     "Replaces XLink references on all features with the referenced object"
     for feature in features:
         if isinstance(feature, aixm_types.Feature):
-            replace_xlinks_r(feature, {id(feature)})
+            replace_xlinks_r(feature, set())
 
 
-def replace_xlinks_r(entity: aixm_types.Feature | list, visited: set = set()) -> None:
+def replace_xlinks_r(entity: aixm_types.Feature | list, visited: set) -> None:
 
     entity_id = id(entity)
     if entity_id in visited:
@@ -24,18 +24,18 @@ def replace_xlinks_r(entity: aixm_types.Feature | list, visited: set = set()) ->
 
     if isinstance(entity, list):
         for element in entity:
-            replace_xlinks_r(element, visited)
+            if isinstance(entity, aixm_types.Feature) or isinstance(entity, list):
+                replace_xlinks_r(element, visited)
     elif isinstance(entity, aixm_types.Feature):
         for field in fields(entity):
             if field.name == "parent":
                 continue
             attr = getattr(entity, field.name)
-            for i, a in enumerate(attr):
-                if isinstance(a, aixm_types.XLink):
-                    if a.target is not None:
-                        attr[i] = a.target
-                else:
-                    replace_xlinks_r(a, visited)
+            if isinstance(attr, aixm_types.Feature) or isinstance(attr, list):
+                replace_xlinks_r(attr, visited)
+            if isinstance(attr, aixm_types.XLink):
+                if attr.target is not None:
+                    setattr(entity, field.name, attr.target)
     
 
 def parse(files: list[str], resolve_xlinks = False) -> list:
