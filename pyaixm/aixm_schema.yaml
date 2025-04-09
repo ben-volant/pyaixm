@@ -1629,8 +1629,34 @@ ApproachLeg: &ApproachLeg
 ArrivalFeederLeg: 
   <<: *ApproachLeg
 
+FASDataBlock:
+  horizontalAlarmLimit: ValAlarmLimitType
+  verticalAlarmLimit: ValAlarmLimitType
+  thresholdCourseWidth: ValDistanceType
+  lengthOffset: ValDistanceType
+  CRCRemainder: ValHexType
+  operationType: NoSequenceType
+  serviceProviderSBAS: NoSequenceType
+  approachPerformanceDesignator: NoSequenceType
+  routeIndicator: AlphaType
+  referencePathDataSelector: NoSequenceType
+  referencePathIdentifier: AlphanumericType
+  codeICAO: AlphanumericType
+
 FinalLeg:
   <<: *ApproachLeg
+  guidanceSystem: CodeFinalGuidanceType
+  landingSystemCategory: CodeApproachGuidanceType
+  minimumBaroVnavTemperature: ValTemperatureType
+  rnpDMEAuthorized: CodeYesNoType
+  courseOffsetAngle: ValBearingType
+  courseOffsetSide: CodeSideType
+  courseCentrelineDistance: ValDistanceType
+  courseOffsetDistance: ValDistanceType
+  courseCentrelineIntersect: CodeRelativePositionType
+  finalPathAlignmentPoint: SignificantPoint
+  visualDescentPoint: TerminalSegmentPoint
+  FASData: FASDataBlock
 
 InitialLeg:
   <<: *ApproachLeg
@@ -1640,6 +1666,29 @@ IntermediateLeg:
 
 MissedApproachLeg:
   <<: *ApproachLeg
+  type: CodeMissedApproachType
+  thresholdAfterMAPT: CodeYesNoType
+  heightMAPT: ValDistanceVerticalType
+  requiredNavigationPerformance: CodeRNPType
+
+DepartureArrivalCondition:
+  minimumEnrouteAltitude: ValDistanceVerticalType
+  minimumCrossingAtEnd: ValDistanceVerticalType
+  minimumCrossingAtEndReference: CodeVerticalReferenceType
+  maximumCrossingAtEnd: ValDistanceVerticalType
+  maximumCrossingAtEndReference: CodeVerticalReferenceType
+  engineType: AircraftCharacteristic
+  annotation: Note
+
+DepartureLeg:
+  <<: *SegmentLeg
+  requiredNavigationPerformance: CodeRNPType
+  minimumObstacleClearanceAltitude: ValDistanceVerticalType
+  condition: DepartureArrivalCondition
+
+ArrivalLeg:
+  <<: *SegmentLeg
+  requiredNavigationPerformance: CodeRNPType
 
 ProcedureTransition:
   annotation: Note
