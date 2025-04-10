@@ -228,6 +228,10 @@ SegmentPoint: &SegmentPoint
     choice:
       - pointChoice_fixDesignatedPoint: DesignatedPoint
       - pointChoice_navaidSystem: Navaid
+      - pointChoice_aimingPoint: TouchDownLiftOff
+      - pointChoice_runwayPoint: RunwayCentrelinePoint
+      - pointChoice_airportReferencePoint: AirportHeliport
+      - pointChoice_position: Point
 
 #########################
 ##  Aerial Refuelling  ##
@@ -825,6 +829,17 @@ AngleIndication:
   trueAngle: ValBearingType
   cardinalDirection: CodeCardinalDirectionType
   minimumReceptionAltitude: ValDistanceVerticalType
+  pointChoice:
+    type: SignificantPoint
+    choice:
+      - pointChoice_fixDesignatedPoint: DesignatedPoint
+      - pointChoice_navaidSystem: Navaid
+      - pointChoice_aimingPoint: TouchDownLiftOff
+      - pointChoice_runwayPoint: RunwayCentrelinePoint
+      - pointChoice_airportReferencePoint: AirportHeliport
+      - pointChoice_position: Point
+  annotation: Note
+  fix: DesignatedPoint
 
 AngleUse:
   alongCourseGuidance: CodeYesNoType
@@ -903,6 +918,10 @@ TerminalSegmentPoint: #*SegmentPoint
     choice:
       - pointChoice_fixDesignatedPoint: DesignatedPoint
       - pointChoice_navaidSystem: Navaid
+      - pointChoice_aimingPoint: TouchDownLiftOff
+      - pointChoice_runwayPoint: RunwayCentrelinePoint
+      - pointChoice_airportReferencePoint: AirportHeliport
+      - pointChoice_position: Point
 
 VerticalStructure:
   name: TextNameType
@@ -955,7 +974,12 @@ HoldingPattern:
   instruction: TextInstructionType
   nonStandardHolding: CodeYesNoType
   extent: Curve
-  outboundLegSpan: HoldingPatternLength
+  outboundLegSpan: 
+    type: HoldingPatternLength
+    choice:
+      - outboundLegSpan_endDistance: HoldingPatternDistance
+      - outboundLegSpan_endTime: HoldingPatternDuration
+      - outboundLegSpan_endPoint: SegmentPoint
   annotation: Note
   holdingPoint: SegmentPoint
 
@@ -1067,6 +1091,17 @@ DistanceIndication:
   distance: ValDistanceType
   minimumReceptionAltitude: ValDistanceVerticalType
   type: CodeDistanceIndicationType
+  pointChoice:
+    type: SignificantPoint
+    choice:
+      - pointChoice_fixDesignatedPoint: DesignatedPoint
+      - pointChoice_navaidSystem: Navaid
+      - pointChoice_aimingPoint: TouchDownLiftOff
+      - pointChoice_runwayPoint: RunwayCentrelinePoint
+      - pointChoice_airportReferencePoint: AirportHeliport
+      - pointChoice_position: Point
+  annotation: Note
+  fix: DesignatedPoint
 
 Elevation:
   <<: *NavaidEquipment
@@ -1163,7 +1198,15 @@ SignificantPointInAirspace:
   type: CodeAirspacePointRoleType
   relativeLocation: CodeAirspacePointPositionType
   containingAirspace: Airspace
-  location: SignificantPoint
+  location:
+    type: SignificantPoint
+    choice:
+      - location_fixDesignatedPoint: DesignatedPoint
+      - location_navaidSystem: Navaid
+      - location_aimingPoint: TouchDownLiftOff
+      - location_runwayPoint: RunwayCentrelinePoint
+      - location_airportReferencePoint: AirportHeliport
+      - location_position: Point
   annotation: Note
 
 SpecialNavigationStation:
@@ -1207,7 +1250,12 @@ ObstacleArea:
   surfaceExtent: Surface
   annotation: Note
   obstacle: VerticalStructure
-  reference: ObstacleAreaOrigin 
+  reference: 
+    type: ObstacleAreaOrigin 
+    choice:
+      - reference_ownerAirport: AirportHeliport
+      - reference_ownerRunway: RunwayDirection
+      - reference_ownerOrganisartion: OrganisationAuthority
 
 VerticalStructureLightingStatus:
   <<: *PropertiesWithSchedule
@@ -1279,7 +1327,15 @@ AirspaceBorderCrossing:
 
 ChangeOverPoint:
   distance: ValDistanceType
-  location: SignificantPoint
+  location:
+    type: SignificantPoint
+    choice:
+      - location_fixDesignatedPoint: DesignatedPoint
+      - location_navaidSystem: Navaid
+      - location_aimingPoint: TouchDownLiftOff
+      - location_runwayPoint: RunwayCentrelinePoint
+      - location_airportReferencePoint: AirportHeliport
+      - location_position: Point
   applicableRoutePortion: RoutePortion
 
 DirectFlight: &DirectFlight
@@ -1291,8 +1347,24 @@ DirectFlightClass:
 
 DirectFlightSegment:
   <<: *DirectFlight
-  end: SignificantPoint
-  start: SignificantPoint
+  end:
+    type: SignificantPoint
+    choice:
+      - end_fixDesignatedPoint: DesignatedPoint
+      - end_navaidSystem: Navaid
+      - end_aimingPoint: TouchDownLiftOff
+      - end_runwayPoint: RunwayCentrelinePoint
+      - end_airportReferencePoint: AirportHeliport
+      - end_position: Point
+  start:
+    type: SignificantPoint
+    choice:
+      - start_fixDesignatedPoint: DesignatedPoint
+      - start_navaidSystem: Navaid
+      - start_aimingPoint: TouchDownLiftOff
+      - start_runwayPoint: RunwayCentrelinePoint
+      - start_airportReferencePoint: AirportHeliport
+      - start_position: Point
 
 Route:
   designatorPrefix: CodeRouteDesignatorPrefixType
@@ -1322,9 +1394,33 @@ RouteDME:
   applicableRoutePortion: RoutePortion
 
 RoutePortion:
-  start: SignificantPoint
-  intermediatePoint: SignificantPoint
-  end: SignificantPoint
+  end:
+    type: SignificantPoint
+    choice:
+      - end_fixDesignatedPoint: DesignatedPoint
+      - end_navaidSystem: Navaid
+      - end_aimingPoint: TouchDownLiftOff
+      - end_runwayPoint: RunwayCentrelinePoint
+      - end_airportReferencePoint: AirportHeliport
+      - end_position: Point
+  start:
+    type: SignificantPoint
+    choice:
+      - start_fixDesignatedPoint: DesignatedPoint
+      - start_navaidSystem: Navaid
+      - start_aimingPoint: TouchDownLiftOff
+      - start_runwayPoint: RunwayCentrelinePoint
+      - start_airportReferencePoint: AirportHeliport
+      - start_position: P
+  intermediatePoint:
+    type: SignificantPoint
+    choice:
+      - intermediatePoint_fixDesignatedPoint: DesignatedPoint
+      - intermediatePoint_navaidSystem: Navaid
+      - intermediatePoint_aimingPoint: TouchDownLiftOff
+      - intermediatePoint_runwayPoint: RunwayCentrelinePoint
+      - intermediatePoint_airportReferencePoint: AirportHeliport
+      - intermediatePoint_position: P
   referencedRoute: Route
 
 RouteSegment:
@@ -1607,7 +1703,12 @@ Procedure: &Procedure
   airportHeliport: AirportHeliport
   aircraftCharactertic: AircraftCharacteristic
   flightTransition: ProcedureTransition
-  guidanceFacility: GuidanceService
+  guidanceFacility:
+    type: GuidanceService
+    choice:
+      - guidanceFacility_navaid: Navaid
+      - guidanceFacility_specialNavigationSystem: SpecialNavigationSystem
+      - guidanceFacility_radar: RadarSystem
   annotation: Note
   safeAltitude: SafeAltitudeArea
 
@@ -1700,7 +1801,15 @@ FinalLeg:
   courseCentrelineDistance: ValDistanceType
   courseOffsetDistance: ValDistanceType
   courseCentrelineIntersect: CodeRelativePositionType
-  finalPathAlignmentPoint: SignificantPoint
+  finalPathAlignmentPoint: 
+    type: SignificantPoint
+    choice:
+      - finalPathAlignmentPoint_fixDesignatedPoint: DesignatedPoint
+      - finalPathAlignmentPoint_navaidSystem: Navaid
+      - finalPathAlignmentPoint_aimingPoint: TouchDownLiftOff
+      - finalPathAlignmentPoint_runwayPoint: RunwayCentrelinePoint
+      - finalPathAlignmentPoint_airportReferencePoint: AirportHeliport
+      - finalPathAlignmentPoint_position: Point
   visualDescentPoint: TerminalSegmentPoint
   FASData: FASDataBlock
 
@@ -1757,14 +1866,14 @@ SafeAltitudeArea:
   centrePoint: 
     type: SignificantPoint
     choice:
-      - airportReferencePoint: AirportHeliport
-      - aimingPoint: TouchDownLiftOff
-      - runwayPoint: RunwayCentrelinePoint
-      - position: Point
+      - centrePoint_airportReferencePoint: AirportHeliport
+      - centrePoint_aimingPoint: TouchDownLiftOff
+      - centrePoint_runwayPoint: RunwayCentrelinePoint
+      - centrePoint_position: Point
       - centrePoint_navaidSystem: Navaid
       - centrePoint_fixDesignatedPoint: DesignatedPoint
-      - annotation: Note
-      - sector: SafeAltitudeSector
+  annotation: Note
+  sector: SafeAltitudeSector
 
 SafeAltitudeSector:
   bufferWidth: ValDistanceType
