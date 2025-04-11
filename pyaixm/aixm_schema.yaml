@@ -1846,7 +1846,7 @@ ArrivalLeg:
   requiredNavigationPerformance: CodeRNPType
 
 ProcedureTransitionLeg:
-  seqNumberArinc: NoSequenceType
+  seqNumberARINC: NoSequenceType
   annotation: Note
   theSegmentLeg: SegmentLeg
 
