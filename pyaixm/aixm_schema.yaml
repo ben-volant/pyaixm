@@ -1701,7 +1701,7 @@ Procedure: &Procedure
   RNAV: CodeYesNoType
   availability: ProcedureAvailability
   airportHeliport: AirportHeliport
-  aircraftCharactertic: AircraftCharacteristic
+  aircraftCharacteristic: AircraftCharacteristic
   flightTransition: ProcedureTransition
   guidanceFacility:
     type: GuidanceService
