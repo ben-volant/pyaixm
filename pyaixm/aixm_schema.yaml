@@ -530,7 +530,9 @@ GuidanceLineMarking:
   condition: CodeMarkingConditionType
 
 LandingTakeoffAreaCollection:
+  TLOF: TouchDownLiftOff
   runway: RunwayDirection
+  annotation: Note
 
 LightActivation:
   clicks: NoNumberType
