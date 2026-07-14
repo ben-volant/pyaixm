@@ -1,5 +1,6 @@
 from dataclasses import dataclass, asdict, field, fields, make_dataclass
 import json
+import keyword
 import os
 import typing
 from pprint import pprint
@@ -306,6 +307,8 @@ def construct_dataclass(schema: dict, classname: str):
     
     for tag, value in schema[classname].items():
         fieldname = tag.replace('-', '')  # remove invalid chars from field name
+        if keyword.iskeyword(fieldname):
+            fieldname += "_"
         
         # Check if this is a choice field
         if isinstance(value, dict) and 'choice' in value:
