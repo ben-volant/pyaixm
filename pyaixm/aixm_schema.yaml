@@ -771,7 +771,7 @@ Airspace:
   designatorICAO: CodeYesNoType
   controlType: CodeMilitaryOperationsType
   upperLowerSeparation: ValFLType
-  alclass: AirspaceLayerClass
+  class: AirspaceLayerClass
   protectedRoute: Route
   activation: AirspaceActivation
   annotation: Note
