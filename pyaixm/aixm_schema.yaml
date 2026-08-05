@@ -223,7 +223,15 @@ SegmentPoint: &SegmentPoint
   radarGuidance: CodeYesNoType
   facilityMakeup: PointReference
   extendedServiceVolume: RadioFrequencyArea
-  pointChoice: SignificantPoint
+  pointChoice:
+    type: SignificantPoint
+    choice:
+      - pointChoice_fixDesignatedPoint: DesignatedPoint
+      - pointChoice_navaidSystem: Navaid
+      - pointChoice_aimingPoint: TouchDownLiftOff
+      - pointChoice_runwayPoint: RunwayCentrelinePoint
+      - pointChoice_airportReferencePoint: AirportHeliport
+      - pointChoice_position: Point
 
 #########################
 ##  Aerial Refuelling  ##
@@ -521,6 +529,11 @@ GuidanceLineMarking:
   markingICAOStandard: CodeYesNoType
   condition: CodeMarkingConditionType
 
+LandingTakeoffAreaCollection:
+  TLOF: TouchDownLiftOff
+  runway: RunwayDirection
+  annotation: Note
+
 LightActivation:
   clicks: NoNumberType
   intensityLevel: CodeLightIntensityType
@@ -758,7 +771,7 @@ Airspace:
   designatorICAO: CodeYesNoType
   controlType: CodeMilitaryOperationsType
   upperLowerSeparation: ValFLType
-  alclass: AirspaceLayerClass
+  class: AirspaceLayerClass
   protectedRoute: Route
   activation: AirspaceActivation
   annotation: Note
@@ -818,6 +831,17 @@ AngleIndication:
   trueAngle: ValBearingType
   cardinalDirection: CodeCardinalDirectionType
   minimumReceptionAltitude: ValDistanceVerticalType
+  pointChoice:
+    type: SignificantPoint
+    choice:
+      - pointChoice_fixDesignatedPoint: DesignatedPoint
+      - pointChoice_navaidSystem: Navaid
+      - pointChoice_aimingPoint: TouchDownLiftOff
+      - pointChoice_runwayPoint: RunwayCentrelinePoint
+      - pointChoice_airportReferencePoint: AirportHeliport
+      - pointChoice_position: Point
+  annotation: Note
+  fix: DesignatedPoint
 
 AngleUse:
   alongCourseGuidance: CodeYesNoType
@@ -829,13 +853,17 @@ ContactInformation:
   address: PostalAddress
   phoneFax: TelephoneContact
 
-ElevatedPoint:
+Point: &Point
   pos: str
+  horizontalAccuracy: str
+  annotation: str
+
+ElevatedPoint:
+  <<: *Point
   elevation: str
   geoidUndulation: str
   verticalDatum: str
   verticalAccuracy: str
-  horizontalAccuracy: str
 
 ElevatedSurface:
   elevation: ValDistanceVerticalType
@@ -884,6 +912,41 @@ TerminalSegmentPoint: #*SegmentPoint
   flyOver: CodeYesNoType
   waypoint: CodeYesNoType
   radarGuidance: CodeYesNoType
+  facilityMakeup: PointReference
+  extendedServiceVolume: RadioFrequencyArea
+  annotation: Note
+  pointChoice:
+    type: SignificantPoint
+    choice:
+      - pointChoice_fixDesignatedPoint: DesignatedPoint
+      - pointChoice_navaidSystem: Navaid
+      - pointChoice_aimingPoint: TouchDownLiftOff
+      - pointChoice_runwayPoint: RunwayCentrelinePoint
+      - pointChoice_airportReferencePoint: AirportHeliport
+      - pointChoice_position: Point
+
+VerticalStructure:
+  name: TextNameType
+  type: CodeVerticalStructureType
+  lighted: CodeYesNoType
+  markingICAOStandard: CodeYesNoType
+  group: CodeYesNoType
+  length: ValDistanceType
+  width: ValDistanceType
+  radius: ValDistanceType
+  lightingICAOStandard: CodeYesNoType
+  synchronisedLighting: CodeYesNoType
+  supportedGroundLight: GroundLightSystem
+  marker: MarkerBeacon
+  hostedNavaidEquipment: NavaidEquipment
+  hostedSpecialNavStation: SpecialNavigationStation
+  annotation: Note
+  hostedPassengerService: PassengerService
+  supportedService: Service
+  hostedOrganisation: OrganisationAuthority
+  lightingAvailability: VerticalStructureLightingStatus
+  hostedUnit: Unit
+  part: VerticalStructurePart
 
 VisualGlideSlopeIndicator:
   <<: *GroundLightSystem
@@ -913,7 +976,12 @@ HoldingPattern:
   instruction: TextInstructionType
   nonStandardHolding: CodeYesNoType
   extent: Curve
-  outboundLegSpan: HoldingPatternLength
+  outboundLegSpan: 
+    type: HoldingPatternLength
+    choice:
+      - outboundLegSpan_endDistance: HoldingPatternDistance
+      - outboundLegSpan_endTime: HoldingPatternDuration
+      - outboundLegSpan_endPoint: SegmentPoint
   annotation: Note
   holdingPoint: SegmentPoint
 
@@ -1006,6 +1074,8 @@ DesignatedPoint:
   designator: CodeDesignatedPointDesignatorType
   type: CodeDesignatedPointType
   name: TextNameType
+  location: Point
+  airportHeliport: AirportHeliport
 
 DME:
   <<: *NavaidEquipment
@@ -1023,6 +1093,17 @@ DistanceIndication:
   distance: ValDistanceType
   minimumReceptionAltitude: ValDistanceVerticalType
   type: CodeDistanceIndicationType
+  pointChoice:
+    type: SignificantPoint
+    choice:
+      - pointChoice_fixDesignatedPoint: DesignatedPoint
+      - pointChoice_navaidSystem: Navaid
+      - pointChoice_aimingPoint: TouchDownLiftOff
+      - pointChoice_runwayPoint: RunwayCentrelinePoint
+      - pointChoice_airportReferencePoint: AirportHeliport
+      - pointChoice_position: Point
+  annotation: Note
+  fix: DesignatedPoint
 
 Elevation:
   <<: *NavaidEquipment
@@ -1119,7 +1200,15 @@ SignificantPointInAirspace:
   type: CodeAirspacePointRoleType
   relativeLocation: CodeAirspacePointPositionType
   containingAirspace: Airspace
-  location: SignificantPoint
+  location:
+    type: SignificantPoint
+    choice:
+      - location_fixDesignatedPoint: DesignatedPoint
+      - location_navaidSystem: Navaid
+      - location_aimingPoint: TouchDownLiftOff
+      - location_runwayPoint: RunwayCentrelinePoint
+      - location_airportReferencePoint: AirportHeliport
+      - location_position: Point
   annotation: Note
 
 SpecialNavigationStation:
@@ -1163,30 +1252,12 @@ ObstacleArea:
   surfaceExtent: Surface
   annotation: Note
   obstacle: VerticalStructure
-  reference: ObstacleAreaOrigin 
-
-VerticalStructure:
-  name: TextNameType
-  type: CodeVerticalStructureType
-  lighted: CodeYesNoType
-  markingICAOStandard: CodeYesNoType
-  group: CodeYesNoType
-  length: ValDistanceType
-  width: ValDistanceType
-  radius: ValDistanceType
-  lightingICAOStandard: CodeYesNoType
-  synchronisedLighting: CodeYesNoType
-  supportedGroundLight: GroundLightSystem
-  marker: MarkerBeacon
-  hostedNavaidEquipment: NavaidEquipment
-  hostedSpecialNavStation: SpecialNavigationStation
-  annotation: Note
-  hostedPassengerService: PassengerService
-  supportedService: Service
-  hostedOrganisation: OrganisationAuthority
-  lightingAvailability: VerticalStructureLightingStatus
-  hostedUnit: Unit
-  part: VerticalStructurePart
+  reference: 
+    type: ObstacleAreaOrigin 
+    choice:
+      - reference_ownerAirport: AirportHeliport
+      - reference_ownerRunway: RunwayDirection
+      - reference_ownerOrganisartion: OrganisationAuthority
 
 VerticalStructureLightingStatus:
   <<: *PropertiesWithSchedule
@@ -1258,7 +1329,15 @@ AirspaceBorderCrossing:
 
 ChangeOverPoint:
   distance: ValDistanceType
-  location: SignificantPoint
+  location:
+    type: SignificantPoint
+    choice:
+      - location_fixDesignatedPoint: DesignatedPoint
+      - location_navaidSystem: Navaid
+      - location_aimingPoint: TouchDownLiftOff
+      - location_runwayPoint: RunwayCentrelinePoint
+      - location_airportReferencePoint: AirportHeliport
+      - location_position: Point
   applicableRoutePortion: RoutePortion
 
 DirectFlight: &DirectFlight
@@ -1270,8 +1349,24 @@ DirectFlightClass:
 
 DirectFlightSegment:
   <<: *DirectFlight
-  end: SignificantPoint
-  start: SignificantPoint
+  end:
+    type: SignificantPoint
+    choice:
+      - end_fixDesignatedPoint: DesignatedPoint
+      - end_navaidSystem: Navaid
+      - end_aimingPoint: TouchDownLiftOff
+      - end_runwayPoint: RunwayCentrelinePoint
+      - end_airportReferencePoint: AirportHeliport
+      - end_position: Point
+  start:
+    type: SignificantPoint
+    choice:
+      - start_fixDesignatedPoint: DesignatedPoint
+      - start_navaidSystem: Navaid
+      - start_aimingPoint: TouchDownLiftOff
+      - start_runwayPoint: RunwayCentrelinePoint
+      - start_airportReferencePoint: AirportHeliport
+      - start_position: Point
 
 Route:
   designatorPrefix: CodeRouteDesignatorPrefixType
@@ -1301,9 +1396,33 @@ RouteDME:
   applicableRoutePortion: RoutePortion
 
 RoutePortion:
-  start: SignificantPoint
-  intermediatePoint: SignificantPoint
-  end: SignificantPoint
+  end:
+    type: SignificantPoint
+    choice:
+      - end_fixDesignatedPoint: DesignatedPoint
+      - end_navaidSystem: Navaid
+      - end_aimingPoint: TouchDownLiftOff
+      - end_runwayPoint: RunwayCentrelinePoint
+      - end_airportReferencePoint: AirportHeliport
+      - end_position: Point
+  start:
+    type: SignificantPoint
+    choice:
+      - start_fixDesignatedPoint: DesignatedPoint
+      - start_navaidSystem: Navaid
+      - start_aimingPoint: TouchDownLiftOff
+      - start_runwayPoint: RunwayCentrelinePoint
+      - start_airportReferencePoint: AirportHeliport
+      - start_position: P
+  intermediatePoint:
+    type: SignificantPoint
+    choice:
+      - intermediatePoint_fixDesignatedPoint: DesignatedPoint
+      - intermediatePoint_navaidSystem: Navaid
+      - intermediatePoint_aimingPoint: TouchDownLiftOff
+      - intermediatePoint_runwayPoint: RunwayCentrelinePoint
+      - intermediatePoint_airportReferencePoint: AirportHeliport
+      - intermediatePoint_position: P
   referencedRoute: Route
 
 RouteSegment:
@@ -1398,6 +1517,10 @@ AircraftGroundService:
 AirportClearanceService:
   <<: *AirportGroundService
   snowPlan: TextInstructionType
+
+AirportHeliportGroundService:
+  <<: *Service
+  airportHeliport: AirportHeliport
 
 AirportSuppliesService:
   <<: *AirportGroundService
@@ -1559,3 +1682,235 @@ SecondarySurveillanceRadar:
 
 SurveillanceGroundStation:
   videoMap: CodeYesNoType
+
+##################
+##  Approaches  ##
+##################
+
+ProcedureAvailability:
+  status: CodeProcedureAvailabilityType
+  timeInterval: Timesheet
+  annotation: Note
+  specialDateAuthority: OrganisationAuthority
+
+Procedure: &Procedure
+  communicationFailureInstruction: TextInstructionType
+  instruction: TextInstructionType
+  designCriteria: CodeDesignStandardType
+  codingStandard: CodeProcedureCodingStandardType
+  flightChecked: CodeYesNoType
+  name: TextNameType
+  RNAV: CodeYesNoType
+  availability: ProcedureAvailability
+  airportHeliport: AirportHeliport
+  aircraftCharacteristic: AircraftCharacteristic
+  flightTransition: ProcedureTransition
+  guidanceFacility:
+    type: GuidanceService
+    choice:
+      - guidanceFacility_navaid: Navaid
+      - guidanceFacility_specialNavigationSystem: SpecialNavigationSystem
+      - guidanceFacility_radar: RadarSystem
+  annotation: Note
+  safeAltitude: SafeAltitudeArea
+
+FinalProfile:
+  altitude: ApproachAltitudeTable
+  distance: ApproachDistanceTable
+  timing: ApproachTimingTable
+  annotation: note
+
+InstrumentApproachProcedure:
+  <<: *Procedure
+  approachPrefix: CodeApproachPrefixType 
+  approachType: CodeApproachType 
+  multipleIdentification: CodeUpperAlphaType 
+  copterTrack: ValBearingType 
+  circlingIdentification: CodeUpperAlphaType 
+  courseReversalInstruction: TextInstructionType 
+  additionalEquipment: CodeApproachEquipmentAdditionalType 
+  channelGNSS: ValChannelNumberType 
+  WAASReliable: CodeYesNoType 
+  landing: LandingTakeoffAreaCollection
+  missedInstruction: MissedApproachGroup
+  finalProfile: FinalProfile
+
+MissedApproachGroup:
+  instruction: TextInstructionType
+
+SegmentLeg: &SegmentLeg
+  endConditionDesignator: CodeSegmentTerminationType
+  legPath: CodeTrajectoryType
+  legTypeARINC: CodeSegmentPathType
+  course: ValBearingType
+  courseType: CodeCourseType
+  courseDirection: CodeDirectionReferenceType
+  turnDirection: CodeDirectionTurnType
+  speedLimit: ValSpeedType
+  speedReference: CodeSpeedReferenceType
+  speedInterpretation: CodeAltitudeUseType
+  bankAngle: ValAngleType
+  length: ValDistanceType
+  duration: ValDurationType
+  procedureTurnRequired: CodeYesNoType
+  upperLimitAltitude: ValDistanceVerticalType
+  upperLimitReference: CodeVerticalReferenceType
+  lowerLimitAltitude: ValDistanceVerticalType
+  lowerLimitReference: CodeVerticalReferenceType
+  altitudeInterpretation: CodeAltitudeUseType
+  altitudeOverrideATC: ValDistanceVerticalType
+  altitudeOverrideReference: CodeVerticalReferenceType
+  verticalAngle: ValAngleType
+  trajectory: Curve
+  holding: HoldingPattern
+  angle: AngleIndication
+  distance: DistanceIndication
+  startPoint: TerminalSegmentPoint
+  arcCentre: TerminalSegmentPoint
+  endPoint: TerminalSegmentPoint
+  annotation: Note
+  aircraftCategory: AircraftCharacteristic
+  designSurface: ObstacleAssessmentArea
+
+ApproachLeg: &ApproachLeg
+  <<: *SegmentLeg
+
+ArrivalFeederLeg: 
+  <<: *ApproachLeg
+
+FASDataBlock:
+  horizontalAlarmLimit: ValAlarmLimitType
+  verticalAlarmLimit: ValAlarmLimitType
+  thresholdCourseWidth: ValDistanceType
+  lengthOffset: ValDistanceType
+  CRCRemainder: ValHexType
+  operationType: NoSequenceType
+  serviceProviderSBAS: NoSequenceType
+  approachPerformanceDesignator: NoSequenceType
+  routeIndicator: AlphaType
+  referencePathDataSelector: NoSequenceType
+  referencePathIdentifier: AlphanumericType
+  codeICAO: AlphanumericType
+
+FinalLeg:
+  <<: *ApproachLeg
+  guidanceSystem: CodeFinalGuidanceType
+  landingSystemCategory: CodeApproachGuidanceType
+  minimumBaroVnavTemperature: ValTemperatureType
+  rnpDMEAuthorized: CodeYesNoType
+  courseOffsetAngle: ValBearingType
+  courseOffsetSide: CodeSideType
+  courseCentrelineDistance: ValDistanceType
+  courseOffsetDistance: ValDistanceType
+  courseCentrelineIntersect: CodeRelativePositionType
+  finalPathAlignmentPoint: 
+    type: SignificantPoint
+    choice:
+      - finalPathAlignmentPoint_fixDesignatedPoint: DesignatedPoint
+      - finalPathAlignmentPoint_navaidSystem: Navaid
+      - finalPathAlignmentPoint_aimingPoint: TouchDownLiftOff
+      - finalPathAlignmentPoint_runwayPoint: RunwayCentrelinePoint
+      - finalPathAlignmentPoint_airportReferencePoint: AirportHeliport
+      - finalPathAlignmentPoint_position: Point
+  visualDescentPoint: TerminalSegmentPoint
+  FASData: FASDataBlock
+
+InitialLeg:
+  <<: *ApproachLeg
+
+IntermediateLeg:
+  <<: *ApproachLeg
+
+MissedApproachLeg:
+  <<: *ApproachLeg
+  type: CodeMissedApproachType
+  thresholdAfterMAPT: CodeYesNoType
+  heightMAPT: ValDistanceVerticalType
+  requiredNavigationPerformance: CodeRNPType
+
+DepartureArrivalCondition:
+  minimumEnrouteAltitude: ValDistanceVerticalType
+  minimumCrossingAtEnd: ValDistanceVerticalType
+  minimumCrossingAtEndReference: CodeVerticalReferenceType
+  maximumCrossingAtEnd: ValDistanceVerticalType
+  maximumCrossingAtEndReference: CodeVerticalReferenceType
+  engineType: AircraftCharacteristic
+  annotation: Note
+
+DepartureLeg:
+  <<: *SegmentLeg
+  requiredNavigationPerformance: CodeRNPType
+  minimumObstacleClearanceAltitude: ValDistanceVerticalType
+  condition: DepartureArrivalCondition
+
+ArrivalLeg:
+  <<: *SegmentLeg
+  requiredNavigationPerformance: CodeRNPType
+
+ProcedureTransitionLeg:
+  seqNumberARINC: NoSequenceType
+  annotation: Note
+  theSegmentLeg: SegmentLeg
+
+ProcedureTransition:
+  transitionId: CodeDesignatedPointDesignatorType
+  type: CodeProcedurePhaseType
+  instruction: TextInstructionType
+  vectorHeading: ValBearingType
+  trajectory: Curve
+  annotation: Note
+  departureRunwayTransition: LandingTakeoffAreaCollection
+  transitionLeg: ProcedureTransitionLeg
+
+SafeAltitudeArea:
+  location: AirportHeliport
+  safeAreaType: CodeSafeAltitudeType
+  centrePoint: 
+    type: SignificantPoint
+    choice:
+      - centrePoint_airportReferencePoint: AirportHeliport
+      - centrePoint_aimingPoint: TouchDownLiftOff
+      - centrePoint_runwayPoint: RunwayCentrelinePoint
+      - centrePoint_position: Point
+      - centrePoint_navaidSystem: Navaid
+      - centrePoint_fixDesignatedPoint: DesignatedPoint
+  annotation: Note
+  sector: SafeAltitudeSector
+
+SafeAltitudeSector:
+  bufferWidth: ValDistanceType
+  extent: Surface
+  annotation: Note
+  sectorDefinition: CircleSector
+  significantObstacle: Obstruction
+
+StandardInstrumentDeparture:
+  <<: *Procedure
+  designator: TextSIDSTARDesignatorType
+  contingencyRoute:  CodeYesNoType
+  takeoff: LandingTakeoffAreaCollection
+
+StandardInstrumentArrival:
+  <<: *Procedure
+  designator: TextSIDSTARDesignatorType
+  arrival: LandingTakeoffAreaCollection
+
+TerminalArrivalAreaSector:
+  flyByCode: CodeYesNoType
+  procedureTurnRequired: CodeYesNoType
+  altitudeDescription: CodeAltitudeUseType
+  extent: Surface
+  annotation: Note
+  sectorDefinition: CircleSector
+  significantObstacle: Obstruction
+
+TerminalArrivalArea:
+  arrivalAreaType: CodeTAAType
+  outerBufferWidth: ValDistanceType
+  lateralBufferWidth: ValDistanceType
+  buffer: Surface
+  IAF: SignificantPoint
+  IF: SignificantPoint
+  annotation: Note
+  approachRNAV: InstrumentApproachProcedure
+  sector: TerminalArrivalAreaSector
