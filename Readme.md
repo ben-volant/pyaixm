@@ -1,10 +1,9 @@
-# pyaixm
+# pyaixm-v
 
 Parses Aeronautical Information Exchange Model (AIXM) xml data to python dataclasses.
 
-* temporal information is ignored
-* not all AIXM feature types are implemented
-* most of the feature attributes are represented as str
+This is a fork of [pyaixm](https://github.com/volkerp/pyaixm), developed for the specific requirements of Volant Autonomy Ltd. though is intended to be a general purpose and complete utility.
+
 
 ## Installation and usage
 
@@ -41,6 +40,7 @@ Example aixm data file can be found in
 * https://github.com/aixm/donlon
 * https://aip.dfs.de/datasets/
 * https://github.com/volkerp/aixm
+* https://github.com/ben-volant/aixm_procedure_example
 
 
 
